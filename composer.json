@@ -1,0 +1,28 @@
+{
+  "name": "nwm/router-php",
+  "description": "Une petite librairie PHP qui fournit un routeur simple.",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+        {
+            "name": "Nolwenn WEBER-MARQUISET"
+        }
+    ],
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/NolwennWM/renderer-php.git"
+        }
+    ],
+    "require": {
+        "php": ">=8.3",
+        "nwm/renderer-php": "dev-main"
+    },
+  "autoload": {
+    "psr-4": {
+      "NWM\\Router\\": "src/"
+    }
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true
+}

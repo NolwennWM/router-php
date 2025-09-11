@@ -1,0 +1,62 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "475c7363763efa21df3a5364f8c1b8ff",
+    "packages": [
+        {
+            "name": "nwm/renderer-php",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/NolwennWM/renderer-php.git",
+                "reference": "d99428363488757e9e99c3bf806ff6b8b4eb10d8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/NolwennWM/renderer-php/zipball/d99428363488757e9e99c3bf806ff6b8b4eb10d8",
+                "reference": "d99428363488757e9e99c3bf806ff6b8b4eb10d8",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.3"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "NWM\\Renderer\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nolwenn WEBER-MARQUISET"
+                }
+            ],
+            "description": "Une petite librairie PHP qui fournit un moteur de rendu simple.",
+            "support": {
+                "source": "https://github.com/NolwennWM/renderer-php/tree/main",
+                "issues": "https://github.com/NolwennWM/renderer-php/issues"
+            },
+            "time": "2025-09-11T14:26:40+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": {
+        "nwm/renderer-php": 20
+    },
+    "prefer-stable": true,
+    "prefer-lowest": false,
+    "platform": {
+        "php": ">=8.3"
+    },
+    "platform-dev": {},
+    "plugin-api-version": "2.6.0"
+}
