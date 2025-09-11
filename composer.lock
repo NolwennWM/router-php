@@ -4,11 +4,11 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "475c7363763efa21df3a5364f8c1b8ff",
+    "content-hash": "1ae17a5deeba78062297d3b69d41efd5",
     "packages": [
         {
             "name": "nwm/renderer-php",
-            "version": "dev-main",
+            "version": "v0.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/NolwennWM/renderer-php.git",
@@ -23,7 +23,6 @@
             "require": {
                 "php": ">=8.3"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -40,7 +39,7 @@
             ],
             "description": "Une petite librairie PHP qui fournit un moteur de rendu simple.",
             "support": {
-                "source": "https://github.com/NolwennWM/renderer-php/tree/main",
+                "source": "https://github.com/NolwennWM/renderer-php/tree/v0.1.0",
                 "issues": "https://github.com/NolwennWM/renderer-php/issues"
             },
             "time": "2025-09-11T14:26:40+00:00"
@@ -49,9 +48,7 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "nwm/renderer-php": 20
-    },
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
