@@ -1,2 +1,3 @@
-# phprouter
-Simple router php pour mes projets personnels.
+# Routeur PHP
+
+Simple router for my personnal projects.
