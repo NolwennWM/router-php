@@ -2,7 +2,7 @@
 // filepath: c:\Users\Nolwenn\Documents\dev\Dice-of-Developper\app\src\Router\Router.php
 namespace NWM\Router;
 
-use Portfolio\Renderer\Renderer;
+use NWM\Renderer\Renderer;
 
 /**
  * Router class to manage the routing of the website

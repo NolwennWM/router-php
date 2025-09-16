@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1ae17a5deeba78062297d3b69d41efd5",
+    "content-hash": "a06cabd8bea46e55043175b964e2e91e",
     "packages": [
         {
             "name": "nwm/renderer-php",
-            "version": "v0.1.0",
+            "version": "v0.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/NolwennWM/renderer-php.git",
-                "reference": "d99428363488757e9e99c3bf806ff6b8b4eb10d8"
+                "reference": "b33046c92c3e65cb491dafcf61104049961132c7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/NolwennWM/renderer-php/zipball/d99428363488757e9e99c3bf806ff6b8b4eb10d8",
-                "reference": "d99428363488757e9e99c3bf806ff6b8b4eb10d8",
+                "url": "https://api.github.com/repos/NolwennWM/renderer-php/zipball/b33046c92c3e65cb491dafcf61104049961132c7",
+                "reference": "b33046c92c3e65cb491dafcf61104049961132c7",
                 "shasum": ""
             },
             "require": {
@@ -39,10 +39,10 @@
             ],
             "description": "Une petite librairie PHP qui fournit un moteur de rendu simple.",
             "support": {
-                "source": "https://github.com/NolwennWM/renderer-php/tree/v0.1.0",
+                "source": "https://github.com/NolwennWM/renderer-php/tree/v0.2.0",
                 "issues": "https://github.com/NolwennWM/renderer-php/issues"
             },
-            "time": "2025-09-11T14:26:40+00:00"
+            "time": "2025-09-16T14:04:05+00:00"
         }
     ],
     "packages-dev": [],
