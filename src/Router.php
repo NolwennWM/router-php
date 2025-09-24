@@ -1,48 +1,117 @@
 <?php
-// filepath: c:\Users\Nolwenn\Documents\dev\Dice-of-Developper\app\src\Router\Router.php
 namespace NWM\Router;
 
 use NWM\Renderer\Renderer;
+use NWM\Router\Services\Flash_Service;
 
 /**
  * Router class to manage the routing of the website
  */
 class Router
 {
-    public $route_index = 0;
-    public $current_route = [];
-    public $current_lang = "fr";
-    public $available_lang = ["fr", "en", "jp"];
-    private $rootPath = "";
-    private $controllerNamespace = "";
-    private $whiteList = [];
-    private $default_html = "";
+    use Traits\Method_Filter;
 
-    public function __construct()
+    public int $route_index = 0;
+    public array|string $current_route = [];
+    public string $current_lang = "en";
+    public array $available_lang = ["fr", "en", "jp"];
+    private string $rootPath = "";
+    private string $controllerNamespace = "";
+    private array $whiteList = [];
+    public Flash_Service $flashService;
+    public Renderer $renderer;
+
+    public function __construct(bool $doRoutingWithArray = true, bool $startSession = true)
     {
-        $this->startSession();
-        $this->getFilteredURI();
+        $this->flashService = new Flash_Service();
+        if ($startSession) {
+            $this->flashService->startSession();
+        }
+        $this->getFilteredURI($doRoutingWithArray);
         $this->setRootPath("");
         $this->setWhiteList();
+        $this->renderer = new Renderer(lang: $this->current_lang);
     }
 
-    public function getFilteredURI(): array
+    protected function filteredRouting(string $route, callable|string $callback, string $functionName = "")
+    {
+
+    }
+    /**
+     * Method to get the current URI and filter it
+     *
+     * @param boolean $toArray whether to return the URI as an array
+     * @return array|string
+     */
+    public function getFilteredURI($toArray = false): array
     {
         $uri = filter_var($_SERVER["REQUEST_URI"], FILTER_SANITIZE_URL);
         $uri = explode("?", $uri)[0];
         $uri = trim($uri, "/");
-        $langs = [];
-        preg_match('/(?:^|\/)([a-z]{2})(?:\/|$)/', $uri, $langs);
-        $uri = explode("/", $uri);
-        $this->current_route = $uri;
-        if (isset($langs[1]) && in_array($langs[1], $this->available_lang)) {
-            $this->current_lang = $langs[1];
+        if ($toArray) {
+            $uri = explode("/", $uri);
         }
+        $this->getLangFromURI();
+        $this->current_route = $uri;
         return $uri;
     }
-
-    public function pageRouting(array $routes): void
+    /**
+     * Method to get the language from the URI
+     *
+     * @param boolean $keepLang whether to keep the language in the URI
+     * @return string
+     */
+    private function getLangFromURI(bool $keepLang = false): string
     {
+        $lang = "";
+        $currentRoute = $this->current_route;
+        if (is_array($currentRoute)) 
+        {
+            $langs = preg_grep('/^[a-z]{2}$/', $currentRoute);
+            if (!empty($langs))
+            {
+                $lang = $langs[array_key_first($langs)];
+            }
+        }else
+        {
+            $langs = [];
+            preg_match('/(?:^|\/)([a-z]{2})(?:\/|$)/', $currentRoute, $langs);
+            if (!empty($langs))
+            {
+                $lang = $langs[1];
+            }
+        }
+
+        if (!empty($lang) && in_array($lang, $this->available_lang)) 
+        {
+            $this->current_lang = $lang;
+        }
+        if(!$keepLang)
+        {
+            if (is_array($currentRoute)) 
+            {
+                $currentRoute = array_filter($currentRoute, fn($part) => $part !== $lang);
+                $currentRoute = array_values($currentRoute);
+            }else
+            {
+                $currentRoute = preg_replace('/^(\/)?' . $lang . '(\/)?/', '', $currentRoute);
+                $currentRoute = trim($currentRoute, "/");
+            }
+            $this->current_route = $currentRoute;
+        }
+        return $this->current_lang;
+    }
+    /**
+     * Method to route the page based on an array of routes
+     *
+     * @param array $routes
+     * @return void
+     */
+    public function pageRouting(array $routes, bool $startBy = false): void
+    {
+        if (empty($routes) || !is_array($routes)) {
+            $this->getPageNotFound("no routes defined");
+        }
         $route = $this->getNextRoutePart();
         if (array_key_exists($route, $routes)) {
             $this->requirePage($routes[$route]);
@@ -58,13 +127,20 @@ class Router
         $this->route_index++;
         return $route;
     }
-
+    /**
+     * Method to require a page and pass data to it
+     *
+     * @param string $file file path to the page
+     * @param array $data data to pass as variable to the page
+     * @param array $toRender data to render in the page
+     * @return void
+     */
     public function requirePage(string $file, array $data = [], array $toRender = []): void
     {
         $path = $this->rootPath . $file;
-        $renderer = new Renderer($this->default_html, $this->current_lang);
+        
         if (file_exists($path)) {
-            $renderer->render($path, $data, $toRender);
+            $this->renderer->render($path, $data, $toRender);
             $fileName = basename($file, ".php");
             $className = $this->controllerNamespace . $fileName;
             if (class_exists($className, false)) {
@@ -74,7 +150,12 @@ class Router
         }
         $this->getPageNotFound("file not found");
     }
-
+    /**
+     * Method to display a 404 page
+     *
+     * @param string $message optional message to display
+     * @return void
+     */
     public function getPageNotFound(string $message = ""): void
     {
         require __DIR__ . "/404.php";
@@ -99,20 +180,13 @@ class Router
         }
         $this->getPageNotFound("No Method found");
     }
-
-    public function setDefaultHTML(string $path): void
-    {
-        if (file_exists($path)) {
-            $this->default_html = file_get_contents($path);
-        }
-    }
-
-    public function getDefaultHTML(): string
-    {
-        return $this->default_html;
-    }
-
-    public function setRootPath(string $path): void
+    /**
+     * Set the root path for the router
+     *
+     * @param string $path path to the root directory
+     * @return void
+     */
+    public function setRootPath(string $path = ""): void
     {
         if (is_dir($path)) {
             $this->rootPath = $path;
@@ -122,47 +196,43 @@ class Router
             $this->rootPath = __DIR__ . "/../";
         }
     }
-
+    /**
+     * Method to redirect to a given URL
+     * Data can be passed as flash messages
+     *
+     * @param string $url URL to redirect to
+     * @param array $data Data to pass as flash messages
+     * @return void
+     */
     public function redirect(string $url, array $data = []): void
     {
-        if (!empty($data)) {
-            foreach ($data as $key => $value) {
-                $this->addFlashMessage($key, $value);
+        if (!empty($data)) 
+        {
+            foreach ($data as $key => $value) 
+            {
+                $this->flashService->addFlashMessage($key, $value);
             }
         }
         header("Location: " . $url);
         exit;
     }
 
-    public function addFlashMessage(string $type, string|array $message): void
-    {
-        $_SESSION["flashes"][$type][] = $message;
-    }
-
-    public function getFlashMessages(string $type = ""): array
-    {
-        if (!empty($type)) {
-            $flashes = $_SESSION["flashes"][$type] ?? [];
-            unset($_SESSION["flashes"][$type]);
-            return $flashes;
-        }
-        $flashes = $_SESSION["flashes"] ?? [];
-        unset($_SESSION["flashes"]);
-        return $flashes;
-    }
-
-    public function startSession(): void
-    {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-    }
-
+    /**
+     * Set the controller namespace for the router
+     *
+     * @param string $namespace namespace of the controllers
+     * @return void
+     */
     public function setControllerNamespace(string $namespace): void
     {
         $this->controllerNamespace = $namespace . "\\";
     }
-
+    /**
+     * Set the IP whitelist for the router
+     *
+     * @param array $ips array of IP addresses
+     * @return void
+     */
     private function setWhiteList(array $ips = []): void
     {
         if (empty($ips) && !empty($_ENV["IP_WHITELIST"])) {
@@ -173,6 +243,11 @@ class Router
         }
     }
 
+    /**
+     * Check if the current user's IP is in the whitelist
+     *
+     * @return boolean
+     */
     public function isInWhiteList(): bool
     {
         if (empty($this->whiteList)) return true;
@@ -180,13 +255,10 @@ class Router
         return in_array($user_ip, $this->whiteList);
     }
 
-    public function previewContent(string $html, int $limit = 150): string
+    public function setAvaiableLang(array $langs): void
     {
-        $text = strip_tags($html);
-        $text = trim(preg_replace('/\s+/', ' ', $text));
-        if (mb_strlen($text) > $limit) {
-            $text = mb_substr($text, 0, $limit) . '...';
+        if (!empty($langs)) {
+            $this->available_lang = $langs;
         }
-        return $text;
-    }
+    }   
 }

@@ -1,5 +1,5 @@
 <?php 
-namespace NWM\Router;
+namespace NWM\Router\Attributes;
 /**
  * Route Attribute to define the route of a method in a controller
  */

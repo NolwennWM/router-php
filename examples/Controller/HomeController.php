@@ -3,7 +3,7 @@ namespace RouterPHP\Examples\Controller;
 
 use NWM\Router\Route_Attribute as Route;
 
-class HomeController
+class ArrayHomeController
 {
     #[Route(name: "", method: "GET")]
     public function index()
